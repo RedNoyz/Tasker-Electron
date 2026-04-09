@@ -1,0 +1,82 @@
+name: Build and Upload Release Asset
+
+permissions:
+  contents: write
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-upload:
+    runs-on: windows-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Extract version from package.json
+        id: get_version
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          echo "version=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "Detected version: $version"
+
+      - name: 🔎 Verify version matches GitHub Release tag
+        shell: pwsh
+        run: |
+          $expectedTag = "v${{ env.version }}"
+          $actualTag = "${{ github.event.release.tag_name }}"
+          echo "Expected tag: $expectedTag"
+          echo "Actual tag:   $actualTag"
+          if ($expectedTag -ne $actualTag) {
+            Write-Error "❌ Version mismatch: package.json has $expectedTag but release tag is $actualTag"
+            exit 1
+          }
+
+      - name: 🔨 Build Tasker installer (electron-builder)
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📁 Rename installer to stable name
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem -Path dist -Filter "*Setup*.exe" | Select-Object -First 1
+          if ($installer) {
+            Copy-Item $installer.FullName -Destination "dist/Tasker-Setup.exe"
+            echo "Renamed $($installer.Name) → Tasker-Setup.exe"
+          } else {
+            Write-Error "❌ No installer found in dist/"
+            exit 1
+          }
+
+      - name: 📦 Zip installer
+        shell: pwsh
+        run: |
+          mkdir bundle
+          Copy-Item "dist/Tasker-Setup.exe" -Destination bundle/
+          Compress-Archive -Path bundle/* -DestinationPath dist/Tasker.zip
+
+      - name: 🚀 Upload assets to GitHub Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: |
+            dist/Tasker.zip
+            dist/Tasker-Setup.exe
+          name: Tasker-${{ env.version }}
+          draft: false
+          prerelease: ${{ github.event.release.prerelease }}
