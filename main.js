@@ -6,6 +6,7 @@ const {
 } = require('electron');
 const path = require('path');
 const { pathToFileURL } = require('url');
+const { autoUpdater } = require('electron-updater');
 const TaskerDB = require('./src/database');
 
 // ── Single instance lock ───────────────────────────────────────────────────
@@ -13,8 +14,7 @@ const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) { app.quit(); }
 
 // ── Constants ──────────────────────────────────────────────────────────────
-const APP_VERSION = '0.6.0';
-const GITHUB_API_URL = 'https://api.github.com/repos/RedNoyz/Tasker/releases/latest';
+const APP_VERSION = '1.0.0';
 
 // ── State ──────────────────────────────────────────────────────────────────
 let mainWindow   = null;
@@ -213,22 +213,51 @@ function showAbout() {
   });
 }
 
-// ── Update check ───────────────────────────────────────────────────────────
-async function checkForUpdates() {
-  try {
-    const resp = await fetch(GITHUB_API_URL, { signal: AbortSignal.timeout(5000) });
-    const data = await resp.json();
-    const remote = (data.tag_name || '').replace(/^v/, '');
-    if (!remote) return null;
+// ── Auto-updater (electron-updater) ────────────────────────────────────────
+function setupAutoUpdater() {
+  autoUpdater.autoDownload = false;
+  autoUpdater.autoInstallOnAppQuit = true;
 
-    const toTuple = v => v.split('.').map(Number);
-    const [lA, lB, lC] = toTuple(APP_VERSION);
-    const [rA, rB, rC] = toTuple(remote);
-    const isNewer = rA > lA || (rA === lA && rB > lB) || (rA === lA && rB === lB && rC > lC);
-    return isNewer ? remote : null;
-  } catch {
-    return null;
-  }
+  autoUpdater.on('update-available', info => {
+    dialog.showMessageBox(mainWindow, {
+      type: 'question',
+      title: 'Update Available',
+      message: `Tasker v${info.version} is available`,
+      detail: 'Do you want to download the update now?',
+      buttons: ['Download', 'Later'],
+    }).then(({ response }) => {
+      if (response === 0) {
+        autoUpdater.downloadUpdate();
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('update-status', 'downloading');
+        }
+      }
+    });
+  });
+
+  autoUpdater.on('update-not-available', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update-status', 'latest');
+    }
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: 'Update Ready',
+      message: 'Update downloaded',
+      detail: 'The update will be installed when you close the app. Restart now?',
+      buttons: ['Restart', 'Later'],
+    }).then(({ response }) => {
+      if (response === 0) autoUpdater.quitAndInstall();
+    });
+  });
+
+  autoUpdater.on('error', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update-status', 'error');
+    }
+  });
 }
 
 // ── Background workers ─────────────────────────────────────────────────────
@@ -333,9 +362,9 @@ function setupIPC() {
 
   // ── App ──────────────────────────────────────────────────────────────────
   ipcMain.handle('app:version',      () => APP_VERSION);
-  ipcMain.handle('app:check-update', () => checkForUpdates());
-  ipcMain.on('app:show-about',       () => showAbout());
-  ipcMain.on('app:quit',             () => quitApp());
+  ipcMain.on('app:check-update',    () => autoUpdater.checkForUpdates());
+  ipcMain.on('app:show-about',      () => showAbout());
+  ipcMain.on('app:quit',            () => quitApp());
 
   ipcMain.handle('app:audio-url', () => assetFileURL('notification_sound.wav'));
 }
@@ -367,18 +396,9 @@ app.whenReady().then(async () => {
 
   startPolling();
 
-  // Startup update check
-  const newVersion = await checkForUpdates();
-  if (newVersion) {
-    const { response } = await dialog.showMessageBox(mainWindow, {
-      type: 'question',
-      title: 'Update Available',
-      message: `Tasker v${newVersion} is available`,
-      detail: 'Do you want to open the releases page?',
-      buttons: ['Yes', 'No'],
-    });
-    if (response === 0) shell.openExternal('https://github.com/RedNoyz/Tasker/releases/latest');
-  }
+  // Auto-updater
+  setupAutoUpdater();
+  autoUpdater.checkForUpdates();
 });
 
 app.on('window-all-closed', e => e.preventDefault()); // stay alive in tray

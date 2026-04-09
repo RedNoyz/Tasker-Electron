@@ -24,20 +24,24 @@ document.getElementById('btn-new-task').addEventListener('click', () => window.t
 
 document.getElementById('btn-task-list').addEventListener('click', () => window.tasker.openTaskList());
 
-document.getElementById('btn-update').addEventListener('click', async () => {
-  const btn = document.getElementById('btn-update');
-  btn.disabled = true;
-  btn.textContent = 'Checking…';
-  const ver = await window.tasker.checkUpdate();
-  btn.disabled = false;
-  btn.textContent = 'Check for Update';
-  if (ver) {
-    if (confirm(`Tasker v${ver} is available. Open the releases page?`)) {
-      // Main process will open browser via shell
-      window.tasker.showAbout(); // re-use about dialog which has GitHub link
-    }
-  } else {
-    alert('You have the latest version.');
+const updateBtn = document.getElementById('btn-update');
+updateBtn.addEventListener('click', () => {
+  updateBtn.disabled = true;
+  updateBtn.textContent = 'Checking…';
+  window.tasker.checkUpdate();
+});
+
+window.tasker.onUpdateStatus(status => {
+  updateBtn.disabled = false;
+  if (status === 'downloading') {
+    updateBtn.textContent = 'Downloading…';
+    updateBtn.disabled = true;
+  } else if (status === 'latest') {
+    updateBtn.textContent = 'Up to date ✓';
+    setTimeout(() => { updateBtn.textContent = 'Check for Update'; }, 2000);
+  } else if (status === 'error') {
+    updateBtn.textContent = 'Update failed';
+    setTimeout(() => { updateBtn.textContent = 'Check for Update'; }, 2000);
   }
 });
 

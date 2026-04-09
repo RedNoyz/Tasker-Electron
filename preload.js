@@ -32,9 +32,10 @@ contextBridge.exposeInMainWorld('tasker', {
   onPlaySound: (cb) => ipcRenderer.on('play-sound', cb),
 
   // ── App ──────────────────────────────────────────────────────────────────
-  getVersion:   () => ipcRenderer.invoke('app:version'),
-  checkUpdate:  () => ipcRenderer.invoke('app:check-update'),
-  showAbout:    () => ipcRenderer.send('app:show-about'),
-  quit:         () => ipcRenderer.send('app:quit'),
-  getAudioURL:  () => ipcRenderer.invoke('app:audio-url'),
+  getVersion:     () => ipcRenderer.invoke('app:version'),
+  checkUpdate:    () => ipcRenderer.send('app:check-update'),
+  onUpdateStatus: (cb) => ipcRenderer.on('update-status', (_e, status) => cb(status)),
+  showAbout:      () => ipcRenderer.send('app:show-about'),
+  quit:           () => ipcRenderer.send('app:quit'),
+  getAudioURL:    () => ipcRenderer.invoke('app:audio-url'),
 });
