@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+  <title>Tasker – Reminder</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 18px 20px 14px;
+      gap: 12px;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .header-row .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    #task-name {
+      font-size: 15px;
+      font-weight: 700;
+      flex: 1;
+      line-height: 1.4;
+      user-select: text;
+      -webkit-user-select: text;
+      word-break: break-word;
+    }
+
+    #due-label {
+      font-size: 13px;
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    #pending-label {
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .separator {
+      height: 1px;
+      background: var(--border);
+    }
+
+    .reschedule-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .reschedule-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .reschedule-row input { width: 140px; }
+    .reschedule-row input[type="time"] { width: 100px; }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions select {
+      flex: 1;
+      min-width: 130px;
+    }
+
+    #btn-complete { flex: 1; }
+    #btn-snooze1h { flex: 1; }
+    #btn-new-date { flex: 1; }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast">
+    <span class="toast-title" id="toast-title"></span>
+    <span class="toast-detail" id="toast-detail"></span>
+  </div>
+
+  <div class="header-row">
+    <div>
+      <div class="label">Task due</div>
+      <div id="task-name"></div>
+    </div>
+    <div style="text-align:right">
+      <div id="due-label"></div>
+      <div id="pending-label" class="dim"></div>
+    </div>
+  </div>
+
+  <div class="separator"></div>
+
+  <div class="reschedule-section">
+    <label>Reschedule to a new date/time</label>
+    <div class="reschedule-row">
+      <input type="date" id="new-date">
+      <input type="time" id="new-time" value="09:00">
+    </div>
+  </div>
+
+  <div class="separator"></div>
+
+  <div class="actions">
+    <select id="snooze-select">
+      <option value="" disabled selected>Snooze…</option>
+      <option value="3h">Snooze 3h</option>
+      <option value="tomorrow">Tomorrow 9 AM</option>
+      <option value="monday">Next Monday 9 AM</option>
+    </select>
+    <button id="btn-snooze1h">Snooze 1h</button>
+    <button id="btn-new-date" class="primary">New Date</button>
+    <button id="btn-complete" class="success">✅ Complete</button>
+  </div>
+
+  <script src="reminder.js"></script>
+</body>
+</html>

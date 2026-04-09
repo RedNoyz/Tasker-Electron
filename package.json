@@ -1,0 +1,44 @@
+{
+  "name": "tasker",
+  "version": "0.6.0",
+  "description": "Task manager with reminders",
+  "main": "main.js",
+  "scripts": {
+    "start": "node start.js",
+    "dev": "electron .",
+    "build": "electron-builder --win"
+  },
+  "dependencies": {
+    "sql.js": "^1.12.0"
+  },
+  "devDependencies": {
+    "electron": "^34.5.8",
+    "electron-builder": "^24.13.0"
+  },
+  "build": {
+    "appId": "com.rednoyz.tasker",
+    "productName": "Tasker",
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "renderer/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "icon": "assets/favicon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

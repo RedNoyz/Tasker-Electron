@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+  <title>Tasker – Add Task</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 0 20px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: end;
+      width: 100%;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+
+    #task-name { width: 100%; font-size: 14px; padding: 8px 12px; }
+
+    .datetime-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .datetime-row { display: flex; gap: 8px; align-items: center; }
+    .datetime-row input { width: 130px; }
+    .datetime-row input[type="time"] { width: 100px; }
+
+    .actions { display: flex; flex-direction: column; gap: 8px; }
+    .actions button { width: 100px; }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast">
+    <span class="toast-title">✓ Task added</span>
+    <span class="toast-detail" id="toast-detail"></span>
+  </div>
+
+  <form id="task-form" autocomplete="off">
+    <div class="field">
+      <label for="task-name">Task description</label>
+      <input type="text" id="task-name" placeholder="What needs doing?" autofocus>
+    </div>
+
+    <div class="datetime-group">
+      <label>Due date &amp; time</label>
+      <div class="datetime-row">
+        <input type="date" id="due-date">
+        <input type="time" id="due-time" value="09:00">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" id="submit-btn" class="primary" disabled>Log Task</button>
+      <button type="button" id="cancel-btn">Cancel</button>
+    </div>
+  </form>
+
+  <script src="task-window.js"></script>
+</body>
+</html>

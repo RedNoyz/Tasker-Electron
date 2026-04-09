@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+  <title>Tasker – Task List</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .toolbar .spacer { flex: 1; }
+    .toolbar .filter-label { font-size: 12px; color: var(--text-dim); margin-right: 4px; }
+
+    .content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .table-wrap {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    table { width: 100%; }
+
+    th.sortable::after { content: ' ↕'; opacity: 0.4; }
+    th.asc::after      { content: ' ↑'; opacity: 1; }
+    th.desc::after     { content: ' ↓'; opacity: 1; }
+
+    td.id      { width: 50px;  text-align: center; color: var(--text-dim); }
+    td.status  { width: 90px;  text-align: center; }
+    td.notif   { width: 70px;  text-align: center; }
+    td.due     { width: 140px; font-size: 12px; }
+    td.name    { }
+
+    .badge {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge.open     { background: #1a3a5a; color: var(--accent); }
+    .badge.complete { background: #1a3a1a; color: var(--success); }
+
+    .sidebar {
+      width: 160px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 10px;
+      background: var(--surface);
+    }
+    .sidebar button { width: 100%; font-size: 12px; }
+
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-dim);
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <span class="filter-label">Show:</span>
+    <button id="filter-open"     class="primary">Open</button>
+    <button id="filter-complete">Complete</button>
+    <button id="filter-all">All</button>
+    <div class="spacer"></div>
+    <span id="task-count" class="dim"></span>
+  </div>
+
+  <div class="content">
+    <div class="table-wrap">
+      <table id="task-table">
+        <thead>
+          <tr>
+            <th class="sortable" data-col="id">ID</th>
+            <th data-col="name">Title</th>
+            <th data-col="status">Status</th>
+            <th data-col="notified">Notified</th>
+            <th class="sortable" data-col="due_date">Due Date</th>
+          </tr>
+        </thead>
+        <tbody id="task-body">
+          <tr><td colspan="5" class="empty">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sidebar">
+      <button id="btn-done"    class="success">✅ Mark Done</button>
+      <button id="btn-delete"  class="danger">❌ Delete</button>
+      <hr style="border-color:var(--border)">
+      <button id="btn-refresh">🔃 Refresh</button>
+    </div>
+  </div>
+
+  <script src="task-list.js"></script>
+</body>
+</html>

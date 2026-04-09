@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+  <title>Tasker</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 0;
+      position: relative;
+    }
+
+    #about-btn {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 3px 10px;
+      font-size: 11px;
+    }
+
+    #version-label {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 200px;
+    }
+
+    .btn-row button { width: 100%; }
+
+    /* ── Widget mode ── */
+    body.widget {
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    body.widget .btn-row       { display: none; }
+    body.widget #about-btn     { display: none; }
+    body.widget #version-label { display: none; }
+    body.widget #widget-bar    { display: flex; }
+
+    #widget-bar {
+      display: none;
+      gap: 8px;
+      align-items: center;
+    }
+    #widget-bar button { padding: 6px 12px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <button id="about-btn">About</button>
+
+  <div class="btn-row">
+    <button id="btn-widget">Widget Mode</button>
+    <button id="btn-hide">Hide to Tray</button>
+    <button id="btn-new-task" class="primary">New Task</button>
+    <button id="btn-task-list">Show Task List</button>
+    <button id="btn-update" class="success">Check for Update</button>
+  </div>
+
+  <!-- Widget bar shown in widget mode -->
+  <div id="widget-bar">
+    <button id="wb-back"      title="Exit widget mode">🔙</button>
+    <button id="wb-new-task"  title="New Task">🆕</button>
+    <button id="wb-task-list" title="Task List">📃</button>
+    <button id="wb-quit"      title="Quit">❌</button>
+  </div>
+
+  <span id="version-label">v0.6.0</span>
+
+  <!-- Hidden audio element for due-task notifications -->
+  <audio id="notif-sound" preload="auto"></audio>
+
+  <script src="main-window.js"></script>
+</body>
+</html>
