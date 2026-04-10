@@ -14,7 +14,7 @@ const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) { app.quit(); }
 
 // ── Constants ──────────────────────────────────────────────────────────────
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.0.1';
 
 // ── State ──────────────────────────────────────────────────────────────────
 let mainWindow   = null;
