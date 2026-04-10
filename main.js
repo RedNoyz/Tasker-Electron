@@ -14,7 +14,7 @@ const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) { app.quit(); }
 
 // ── Constants ──────────────────────────────────────────────────────────────
-const APP_VERSION = '1.0.1';
+const APP_VERSION = '1.0.2';
 
 // ── State ──────────────────────────────────────────────────────────────────
 let mainWindow   = null;
@@ -253,9 +253,12 @@ function setupAutoUpdater() {
     });
   });
 
-  autoUpdater.on('error', () => {
+  autoUpdater.on('error', err => {
     if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('update-status', 'error');
+      // "No published versions" or network/parse errors on first release → treat as up-to-date
+      const msg = (err && err.message) || '';
+      const isNoRelease = msg.includes('No published versions') || msg.includes('404') || msg.includes('net::');
+      mainWindow.webContents.send('update-status', isNoRelease ? 'latest' : 'error');
     }
   });
 }
