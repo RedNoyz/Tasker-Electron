@@ -1,42 +1,67 @@
-# Tasker
+# Tasker v1.0.0
 
-A lightweight Windows desktop task manager with due-date reminders that actually get your attention.
+> A lightweight Windows desktop task manager with due-date reminders that actually get your attention.
 
-## ✨ Features
-
-- **📝 Quick task entry** — global hotkey `Ctrl+Shift+Space` opens a compact task form from anywhere
-- **⏰ Smart reminders** — when a task is due, a popup appears with a notification sound and stays on top until you act on it
-- **💤 Flexible snoozing** — 1 hour, 3 hours, tomorrow 9 AM, next Monday 9 AM, or pick any custom date/time
-- **📃 Task list** — sortable, filterable view of all your open and completed tasks
-- **🪟 Widget mode** — collapse the main window into a tiny always-on-top button bar
-- **🔔 System tray** — runs quietly in the background, closing the window hides to tray instead of quitting
-- **🔄 Auto-update check** — notifies you when a new version is available on GitHub
-- **💾 Local storage** — all data stays on your machine in a SQLite database, no cloud, no accounts
-
-## 🎯 How it works
-
-1. **Add a task** — press `Ctrl+Shift+Space` (or click *New Task*) and enter what needs doing plus a due date and time
-2. **Forget about it** — Tasker runs in the system tray and polls for due tasks every 10 seconds
-3. **When the time comes** — a reminder window pops up with the task name, due time, and four actions:
-   - **Snooze 1h** — quick one-click postponement
-   - **Snooze…** dropdown — 3h / Tomorrow 9am / Next Monday 9am
-   - **New Date** — pick any custom reschedule time
-   - **Complete** — mark it done
-4. **Closing without acting** auto-snoozes for 1 hour, so reminders never get accidentally dismissed
-5. **Multiple due tasks** queue up — they show one at a time so you can deal with each calmly
-
-## 💻 Installation
-
-1. Download `Tasker-Setup.exe` from the assets below
-2. Run it (Windows SmartScreen may warn — click *More info* → *Run anyway*)
-3. Choose an install location and finish the setup
-
-The app will launch automatically and minimize to your system tray.
-
-## 🛠️ Tech
-
-Built with **Electron**, **sql.js**, and vanilla JS. Same feature set as the original Python/Tkinter Tasker, rewritten for better performance and a modern UI.
+Full rewrite of the original Python/Tkinter app — rebuilt from scratch with Electron and a modern dark UI.
 
 ---
 
-Found a bug or have an idea? [Open an issue](https://github.com/RedNoyz/Tasker/issues).
+## ✨ Highlights
+
+| | Feature | Details |
+|---|---|---|
+| 📝 | **Quick task entry** | Global hotkey `Ctrl+Shift+Space` opens a compact form from anywhere |
+| ⏰ | **Smart reminders** | Always-on-top popup with notification sound when a task is due |
+| 💤 | **Flexible snooze** | 1h · 3h · Tomorrow 9 AM · Next Monday 9 AM · Custom date/time |
+| 🔄 | **Auto-updater** | Downloads and installs updates in the background — no manual downloads |
+| 🪟 | **Widget mode** | Tiny always-on-top button bar for quick access |
+| 🔔 | **System tray** | Runs silently — closing the window hides to tray, not quit |
+| 📃 | **Task list** | Sortable, filterable view of all open and completed tasks |
+| 💾 | **Local-only storage** | SQLite database on your machine — no cloud, no accounts |
+
+---
+
+## 🎯 How it works
+
+```
+Add a task ──► Forget about it ──► Reminder pops up ──► Snooze or Complete
+    │                                     │
+    │  Ctrl+Shift+Space                   │  Close without acting?
+    │  or "New Task" button               │  Auto-snooze 1 hour
+    ▼                                     ▼
+  Set name + due date/time          Multiple reminders queue up
+                                    and show one at a time
+```
+
+---
+
+## 💻 Installation
+
+1. Download **`Tasker-Setup.exe`** from the assets below
+2. Run it — Windows SmartScreen may warn: click *More info* → *Run anyway*
+3. Choose install location → finish setup
+
+The app launches automatically and minimizes to your system tray.
+
+> **Future updates** will be delivered automatically through the built-in updater — no need to come back here.
+
+---
+
+## 🆕 What's new in v1.0.0
+
+- 🏗️ Complete rewrite from Python/Tkinter → **Electron + vanilla JS**
+- 🎨 Modern **dark theme** with consistent styling across all windows
+- 🔄 **Auto-updater** via `electron-updater` (replaces manual "open releases page" flow)
+- 🍞 Styled **toast notifications** instead of native OS popups
+- 📐 Proper **window sizing** using content dimensions
+- 📋 GitHub Actions **CI/CD** builds and uploads the installer automatically
+
+---
+
+## 🛠️ Tech
+
+Built with **Electron 34** · **sql.js** · **electron-updater** · vanilla JS/HTML/CSS
+
+---
+
+Found a bug or have an idea? [Open an issue](https://github.com/RedNoyz/Tasker/issues)
