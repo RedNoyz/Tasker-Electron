@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node start.js",
     "dev": "electron .",
-    "build": "electron-builder --win"
+    "build": "electron-builder --win --publish never"
   },
   "dependencies": {
     "electron-updater": "^6.8.3",
